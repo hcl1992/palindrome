@@ -4,11 +4,14 @@ Implements Manacher's algorithm to find the longest palindromic substring,
 or subpalindrome (SP). For a full explanation of the algorithm, see:
 
 [http://tarokuriyama.com/projects/palindrome2.php](http://tarokuriyama.com/projects/palindrome2.php)
-    
+   
+<hr>
     
 ##### Usage Notes #####
 
-The algorithm is case-insensitive as all text is converted to lower case first. If multiple SPs exist of the same length, the first one is returned. Single characters are considered SPs.
+* The algorithm is case-insensitive as all text is converted to lower case first.
+* If multiple SPs exist of the same length, the first one is returned. 
+* Single characters are considered SPs.
 
 The script can be called from the command line, where the first sole argument is a string in which to search.
 
