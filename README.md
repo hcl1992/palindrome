@@ -9,9 +9,10 @@ or subpalindrome (SP). For a full explanation of the algorithm, see:
     
 ##### Usage Notes #####
 
-* The algorithm is case-insensitive as all text is converted to lower case first.
-* If multiple SPs exist of the same length, the first one is returned. 
-* Single characters are considered SPs.
+* The algorithm is case-insensitive as all text is converted to lower case first
+* If multiple SPs exist of the same length, the first one is returned 
+* Single characters are considered SPs
+* No special treatment is accorded to whitespace
 
 The script can be called from the command line, where the sole argument is the string in which to search.
 
