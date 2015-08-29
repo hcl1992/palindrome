@@ -5,7 +5,8 @@ import sys
 
 def add_delim(string, char):
     """Add delimeter char to bookend and separate string chars."""
-    return char + char.join(list(string.lower())) + char
+    text = char + char.join(list(string.lower())) + char
+    return text, len(text)
 
 def reset_pos(left, center, right, adj_right):
     """If ctr unmoved, set to adj_right. Mirror left around ctr."""
@@ -35,8 +36,7 @@ def find_sps(string, delim):
     """
     if string == '': return [0]
 
-    text = add_delim(string, delim)
-    len_text = len(text)
+    text, len_text = add_delim(string, delim)
     len_sps = [0] * len_text
 
     left, center, right = 1, 1, 1
@@ -92,9 +92,9 @@ def longest_sp(string, delim='|'):
 
 def test_add_delim():
     """Test add_delim() for some corner cases."""
-    assert '||' == add_delim('', '|'), 'empty case fails'
-    assert '|a|' == add_delim('a', '|'), 'single char case fails'
-    assert ',a,b,' == add_delim('ab', ','), 'two char case fails'
+    assert ('||', 2) == add_delim('', '|'), 'empty case fails'
+    assert ('|a|', 3) == add_delim('a', '|'), 'single char case fails'
+    assert (',a,b,', 5) == add_delim('ab', ','), 'two char case fails'
     return True
 
 def test_reset_pos():
