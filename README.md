@@ -24,7 +24,7 @@ The script can be called from the command line, where the sole argument is the s
 
 ##### Tolstoy Test #####
 
-The test script calls the algorithm against the Gutenberg text of Tolstoy's War and Peace, in which the longest SP comes from the line "Pierre saw that Platon did not want to understand what the Frenchman was saying, and he looked on without interfering."
+The test script calls the algorithm against the Gutenberg text of Leo Tolstoy's *War and Peace*, in which the longest SP comes from the line "Pierre saw that Pla*ton did not* want to understand what the Frenchman was saying, and he looked on without interfering."
 
     $ python test.py
     ton did not
