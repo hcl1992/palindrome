@@ -21,6 +21,22 @@ def symmetric(left, left_edge, right, right_edge, text):
             right <= right_edge and
             text[left] == text[right])
 
+def expand_linear(center, right, adj_right, len_sps):
+    """Expand as much as possible using 3-case "mirror" principle of algo."""
+    for i in xrange(1, right - center):
+        dist_to_edge = adj_right - (center + i)
+
+        if len_sps[center - i] < dist_to_edge:
+            len_sps[center - i] = len_sps[center + i]
+        elif len_sps[center - i] > dist_to_edge:
+            len_sps[center + i] = dist_to_edge
+        else:
+            len_sps[center + i] = dist_to_edge
+            center += i
+            break
+
+    return center, len_sps
+
 # Algorithm
 
 def find_sps(string, delim):
@@ -53,19 +69,8 @@ def find_sps(string, delim):
         # find adjusted right index that always falls on a delimeter
         adj_right = right - 1 if len_sps[center] > 0 and left > 0 else right
 
-        # expand as much as possible using 3-case "mirror" principle of algo
-        for i in xrange(1, right - center):
-            dist_to_edge = adj_right - (center + i)
-
-            if len_sps[center - i] < dist_to_edge:
-                len_sps[center - i] = len_sps[center + i]
-            elif len_sps[center - i] > dist_to_edge:
-                len_sps[center + i] = dist_to_edge
-            else:
-                len_sps[center + i] = dist_to_edge
-                center += i
-                break
-
+        # expand using linear algo and reset position indices
+        center, len_sps = expand_linear(center, right, adj_right, len_sps)
         left, center, right = reset_pos(left, center, right, adj_right)
 
     return len_sps
