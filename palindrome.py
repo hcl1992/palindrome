@@ -1,3 +1,11 @@
+"""Linear time algorithm for finding the longest subpalindrome (SP).
+
+Implements Manacher's algorithm to find the longest palindromic substring,
+or subpalindrome (SP). For a full explanation of the algorithm, see:
+
+    http://tarokuriyama.com/projects/palindrome2.php
+"""
+
 from __future__ import division
 import sys
 
@@ -6,10 +14,6 @@ import sys
 def add_delim(string, char):
     """Add delimeter char to bookend and separate string chars."""
     return char + char.join(list(string.lower())) + char
-
-def find_adj_right(left, len_center, right):
-    """Return adjusted right, which always falls on a delimeter."""
-    return right - 1 if len_center > 0 and left > 0 else right
 
 def reset_pos(left, center, right, adj_right):
     """If ctr unmoved, set to adj_right. Mirror left around ctr."""
@@ -27,7 +31,9 @@ def symmetric(left, left_edge, right, right_edge, text):
 # Algorithm
 
 def find_sps(string, delim):
-    """Use Manacher's algorithm to find all subpalindromes for a given string.
+    """Find all SPs for a given string.
+    Add delimeter chars to the original string to simplify indexing.
+
     Args
         string: string in which to search for subpalindromes
         delim: char to use as algorithm delimeter, should not occur in string
@@ -52,9 +58,10 @@ def find_sps(string, delim):
                 len_sps[center] += 1 if left == right else 2
             left, right = left - 1, right + 1
 
-        # expand as much as possible using 3-case "mirror" principle of algo
-        adj_right = find_adj_right(left, len_sps[center], right)
+        # find adjusted right index that always falls on a delimeter
+        adj_right = right - 1 if len_sps[center] > 0 and left > 0 else right
 
+        # expand as much as possible using 3-case "mirror" principle of algo
         for i in xrange(1, right - center):
             dist_to_edge = adj_right - (center + i)
 
@@ -72,7 +79,7 @@ def find_sps(string, delim):
     return len_sps
 
 def longest_sp(string, delim='|'):
-    """Find longest subpalindrome (SP) within given string.
+    """Find longest SP within given string.
     Returns
         tuple of ints (start, end), which return the longest SP
         when used to slice string[start: end]
@@ -132,7 +139,7 @@ def unit_tests():
 # Main
 
 def main(string):
-    """Return longest palindromic substring, or subpalindrome (SP)."""
+    """Return longest SP."""
     start, end = longest_sp(string)
     pal = string[start:end]
     print pal
