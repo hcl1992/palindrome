@@ -1,52 +1,73 @@
 from __future__ import division
 import sys
 
+# Helpers
+
 def add_delim(string, char):
     """Add delimeter char to bookend and separate string chars."""
     return char + char.join(list(string.lower())) + char
 
-def adjust_pos(left, center, right, adj_right):
+def find_adj_right(left, len_center, right):
+    """Return adjusted right, which always falls on a delimeter."""
+    return right - 1 if len_center > 0 and left > 0 else right
+
+def reset_pos(left, center, right, adj_right):
     """If ctr unmoved, set to adj_right. Mirror left around ctr."""
     if (left + right) / 2 == center:
         center = adj_right
     left = center - (right - center)
     return left, center, right
 
+def symmetric(left, left_edge, right, right_edge, text):
+    """Check for symmetry, i.e. left and right are in bounds and chars match."""
+    return (left >= left_edge and
+            right <= right_edge and
+            text[left] == text[right])
+
+# Algorithm
+
 def find_sps(string, delim):
-    """"""
+    """Use Manacher's algorithm to find all subpalindromes for a given string.
+    Args
+        string: string in which to search for subpalindromes
+        delim: char to use as algorithm delimeter, should not occur in string
+    Returns
+        List of the length of the subpalindrome at each location in the
+        delimited string.
+    """
     if string == '': return [0]
 
     text = add_delim(string, delim)
     len_text = len(text)
     len_sps = [0] * len_text
 
-    L, C, R = 1, 1, 1
-    L_edge, R_edge = 1, len(text) - 2
+    left, center, right = 1, 1, 1
+    left_edge, right_edge = 1, len(text) - 2
 
-    while R <= R_edge:
+    while right <= right_edge:
 
         # expand naively around current center; single char is palindrome
-        while L >= L_edge and R <= R_edge and text[L] == text[R]:
-            if text[R] != delim:
-                len_sps[C] += 1 if L == R else 2
-            L, R = L - 1, R + 1
+        while symmetric(left, left_edge, right, right_edge, text):
+            if text[right] != delim:
+                len_sps[center] += 1 if left == right else 2
+            left, right = left - 1, right + 1
 
-        # expand as much as possible using "mirror" principle
-        adj_right = R - 1 if len_sps[C] > 0 and L > 0 else R
-        for i in xrange(1, R - C):
-            dist_to_edge = adj_right - (C + i)
+        # expand as much as possible using 3-case "mirror" principle of algo
+        adj_right = find_adj_right(left, len_sps[center], right)
 
-            if len_sps[C - i] < dist_to_edge:
-                len_sps[C - i] = len_sps[C + i]
-            elif len_sps[C - i] > dist_to_edge:
-                len_sps[C + i] = dist_to_edge
+        for i in xrange(1, right - center):
+            dist_to_edge = adj_right - (center + i)
+
+            if len_sps[center - i] < dist_to_edge:
+                len_sps[center - i] = len_sps[center + i]
+            elif len_sps[center - i] > dist_to_edge:
+                len_sps[center + i] = dist_to_edge
             else:
-                len_sps[C + i] = dist_to_edge
-                C += i
+                len_sps[center + i] = dist_to_edge
+                center += i
                 break
 
-        # reset position indices
-        L, C, R = adjust_pos(L, C, R, adj_right)
+        left, center, right = reset_pos(left, center, right, adj_right)
 
     return len_sps
 
@@ -77,12 +98,12 @@ def test_add_delim():
     assert ',a,b,' == add_delim('ab', ','), 'two char case fails'
     return True
 
-def test_adjust_pos():
+def test_reset_pos():
     """Test various cases for adjust_pos()."""
-    assert (19, 20, 21) == adjust_pos(1, 11, 21, 20)
-    assert (3, 5, 7) == adjust_pos(1, 5, 7, 6)
-    assert (19, 19, 19) == adjust_pos(3, 11, 19, 19)
-    assert (11, 15, 19) == adjust_pos(3, 15, 19, 19)
+    assert (19, 20, 21) == reset_pos(1, 11, 21, 20)
+    assert (3, 5, 7) == reset_pos(1, 5, 7, 6)
+    assert (19, 19, 19) == reset_pos(3, 11, 19, 19)
+    assert (11, 15, 19) == reset_pos(3, 15, 19, 19)
     return True
 
 def test_longest_sp():
@@ -104,7 +125,7 @@ def test_longest_sp():
 def unit_tests():
     """Unit tests."""
     test_add_delim()
-    test_adjust_pos()
+    test_reset_pos()
     test_longest_sp()
     return True
 
