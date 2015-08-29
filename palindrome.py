@@ -21,6 +21,8 @@ def symmetric(left, left_edge, right, right_edge, text):
             right <= right_edge and
             text[left] == text[right])
 
+# Algorithm
+
 def expand_linear(center, right, adj_right, len_sps):
     """Expand as much as possible using 3-case "mirror" principle of algo."""
     for i in xrange(1, right - center):
@@ -36,8 +38,6 @@ def expand_linear(center, right, adj_right, len_sps):
             break
 
     return center, len_sps
-
-# Algorithm
 
 def find_sps(string, delim):
     """Find all SPs for a given string.
@@ -59,7 +59,6 @@ def find_sps(string, delim):
     left_edge, right_edge = 1, len(text) - 2
 
     while right <= right_edge:
-
         # expand naively around current center; single char is palindrome
         while symmetric(left, left_edge, right, right_edge, text):
             if text[right] != delim:
@@ -143,8 +142,8 @@ def main(string):
     return pal
 
 if __name__ == '__main__':
-    unit_tests()
     if len(sys.argv) == 2:
+        unit_tests()
         main(sys.argv[1])
     else:
         print 'Call with single argument, e.g. python palindrome.py racecar'
